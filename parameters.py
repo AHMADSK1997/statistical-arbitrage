@@ -1,0 +1,23 @@
+UPPER_THRESHOLD = 0.1
+LOWER_THRESHOLD = -0.1
+PERIOD = 10
+STOP_LOSS = -50
+TAKE_PROFIT = 100
+TIME_OUT = 2  # in min
+'''
+USDT_START = 100000
+OREDR_AMOUNT = 25000
+BTC_AMOUNT = 0
+ETH_AMOUNT = 0
+PROFIT = USDT_START
+PORTFOLIO_AFER_ORDER = USDT_START
+BTC_AMOUNT_BEFOR_ORDER = BTC_AMOUNT
+ETH_AMOUNT_BEFOR_ORDER = ETH_AMOUNT
+LAST_ORDER = {
+    'order' : None,
+    'time' : None,
+    'is_opened_position' : False,
+    'btc_amount' : BTC_AMOUNT,
+    'eth_amount' : ETH_AMOUNT
+}
+'''
