@@ -65,46 +65,33 @@ class Stratgy():
         print("my TAKE_PROFIT {} ".format(parameters.TAKE_PROFIT))
         print("my TIME_OUT {} ".format(parameters.TIME_OUT))
         '''
-
-        if(self.lastorder == None):
-            # open position
+        # open position
+        if(self.is_opened_position == False):
             print("open position check")
             if(my_zscore>parameters.UPPER_THRESHOLD):
                 self.is_opened_position = True
                 return 'Buy BTC and sell ETH'
-            elif(my_zscore<parameters.LOWER_THRESHOLD):
-                self.is_opened_position = True          
+            elif(my_zscore<parameters.LOWER_THRESHOLD):  
+                self.is_opened_position = True
                 return 'Sell BTC and buy ETH'
+            else: 
+                return 'do nothing'
+        # close position
+        elif(self.is_opened_position == True):
+            print("Cheaking close position")
+            self.getProfit(btc_price[-1:], eth_price[-1:])
+            passedTime = ((btc[1:][:,0][-1:] - self.lastorder.time)/60000)
+            #print('passed time {}'.format(passedTime))
+            if(self.profit < parameters.STOP_LOSS or self.profit > parameters.TAKE_PROFIT or passedTime > parameters.TIME_OUT):
+                if(self.lastorder.order == 'Buy BTC and sell ETH'):
+                    self.updateClose()
+                    return 'Sell BTC and buy ETH'
+                else:
+                    self.updateClose()
+                    return 'Buy BTC and sell ETH'
             else:
                 return 'do nothing'
-        else:
-            # open position
-            if(self.is_opened_position == False):
-                print("open position check")
-                if(my_zscore>parameters.UPPER_THRESHOLD and self.lastorder.order == 'Sell BTC and buy ETH'):
-                    self.is_opened_position = True
-                    return 'Buy BTC and sell ETH'
-                elif(my_zscore<parameters.LOWER_THRESHOLD and self.lastorder.order == 'Buy BTC and sell ETH'):  
-                    self.is_opened_position = True
-                    return 'Sell BTC and buy ETH'
-                else: 
-                    return 'do nothing'
-            # close position
-            elif(self.is_opened_position == True):
-                print("Cheaking close position")
-                self.getProfit(btc_price[-1:], eth_price[-1:])
-                passedTime = ((btc[1:][:,0][-1:] - self.lastorder.time)/60000)
-                #print('passed time {}'.format(passedTime))
-                if(self.profit < parameters.STOP_LOSS or self.profit > parameters.TAKE_PROFIT or passedTime > parameters.TIME_OUT):
-                    if(self.lastorder.order == 'Buy BTC and sell ETH'):
-                        self.updateClose()
-                        return 'Sell BTC and buy ETH'
-                    else:
-                        self.updateClose()
-                        return 'Buy BTC and sell ETH'
-                else:
-                    return 'do nothing'
-            
+        
         
     def calculateZscore(self, btc_closes,eth_closes):
         #print("calculateZscore is runing")

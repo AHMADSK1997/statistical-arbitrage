@@ -38,23 +38,25 @@ def on_message(ws, message):
     is_candle_closed = candle['x']
     close = candle['c']
     time = candle['t']
-    if is_candle_closed:
-        print("candle closed at {}".format(close))
-        if(symbol=='BTCUSDT'):
-            btc_price = float(close)
-        if(symbol=='ETHUSDT'):
-            eth_price = float(close)
-        print(btc_price)
-        print(eth_price)
-        if(btc_price != None and eth_price != None):
-            closesBtc = numpy.append(closesBtc, [[time,btc_price]], axis=0)
-            closesEth = numpy.append(closesEth, [[time,eth_price]], axis=0) 
-            print("***********************************")
-            print("call to the trade strategy") # create the trade strategy
-            stratgy.bot_trade(closesBtc,closesEth)
-            btc_price = None
-            eth_price = None
-def run_web_socket_thread(closesBtc, closesEth):
+    #if is_candle_closed:
+    # start if
+    print("candle closed at {}".format(close))
+    if(symbol=='BTCUSDT'):
+        btc_price = float(close)
+    if(symbol=='ETHUSDT'):
+        eth_price = float(close)
+    print(btc_price)
+    print(eth_price)
+    if(btc_price != None and eth_price != None):
+        closesBtc = numpy.append(closesBtc, [[time,btc_price]], axis=0)
+        closesEth = numpy.append(closesEth, [[time,eth_price]], axis=0) 
+        print("***********************************")
+        print("call to the trade strategy") # create the trade strategy
+        stratgy.bot_trade(closesBtc,closesEth)
+        btc_price = None
+        eth_price = None
+    # end if
+def run_web_socket_thread():
     init()
     socket = f'wss://stream.binance.com:9443/stream?streams=ethusdt@kline_1m/btcusdt@kline_1m'
     ws = websocket.WebSocketApp(socket, on_open=on_open ,on_message=on_message, on_close=on_close)
