@@ -19,9 +19,11 @@ class Stratgy():
         self.total_profit = 0
         self.btc_amount_befor_order = btc_amount
         self.eth_amount_befor_order = eth_amount
+        print('btc_amount {} '.format(self.btc_amount))
 
     def bot_trade(self, btc, eth):
         print('bot trade is runing')
+        print('btc_amount {} '.format(self.btc_amount))
         btc_closes = btc[1:][:,1]
         eth_closes = eth[1:][:,1]
         my_trigger = self.getTrigger(btc, eth)
@@ -50,6 +52,7 @@ class Stratgy():
         print('usdt {} '.format(self.usdt_amount))
         print('total {} '.format(self.total_profit))
         print("***********************************")
+        return {'btc':float(self.btc_amount), 'eth':float(self.eth_amount), 'usdt':float(self.usdt_amount)}
 
 
     def getTrigger(self, btc, eth):

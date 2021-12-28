@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parameters</title>
+</head>
+<body>
+    <form action="/" method="post">
+        <button name="HOME" type="submit">HOME</button>
+    </form>
+    <form action="/ga" method="post">
+        <button name="GA" type="submit">Genetic Algorithm </button>
+    </form>
+    <form action="/BTCUSDT" method="post">
+        <button name="btc" type="submit">BTC</button>
+    </form>
+    <form action="/ETHUSDT" method="post">
+        <button name="eth" type="submit">ETH</button>
+    </form>
+    <section id="trades"></section>
+    <h3>Parameters</h3>
+    <section id="Parameters">
+        UPPER_THRESHOLD : {{Upper}}
+        LOWER_THRESHOLD : {{Lower}}
+        Stoploss : {{Stoploss}}
+        TakeProfit : {{Takeprofit}}
+        Timeout : {{Timeout}}
+    </section>
+    <form action="/forward/" method="post">
+        <button name="forwardBtn" type="submit">Click me</button>
+    </form>
+</body>
+</html>

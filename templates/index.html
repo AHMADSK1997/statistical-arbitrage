@@ -26,44 +26,35 @@
             // to the client. The data is then displayed in the "Received"
             // section of the page.
             socket.on('my_response', function(msg, cb) {
-                $('#log').append('<br>' + $('<div/>').text('Received #' + msg.count + ': ' + msg.data).html());
+                $('#btc').val(msg.btc)
+                $('#eth').val(msg.eth)
+                $('#usdt').val(msg.usdt)
                 if (cb)
                     cb();
             });
         });
     </script>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
 </head>
 <body>
-    <section id="chart"></section>
-
-        <section id="trades"></section>
-
-        <h3>Settings</h3>
-        <section id="Currencies">
-            Start USDT
-            <input type="text"/>
-            Order Amount 
-            <input type="text"/>
-        </section>
-        <h3>Parameters</h3>
-        <section id="Parameters">
-            UPPER_THRESHOLD : {{Upper}}
-            LOWER_THRESHOLD : {{Lower}}
-            Stoploss : {{Stoploss}}
-            TakeProfit : {{Takeprofit}}
-            Timeout : {{Timeout}}
-        </section>
-        <br>
-        <form action="/forward/" method="post">
-            <button name="forwardBtn" type="submit">Click me</button>
-        </form>
+    <form action="/" method="post">
+        <button name="HOME" type="submit">HOME</button>
+    </form>
+    <form action="/ga" method="post">
+        <button name="GA" type="submit">Genetic Algorithm </button>
+    </form>
+    <form action="/BTCUSDT" method="post">
+        <button name="btc" type="submit">BTC</button>
+    </form>
+    <form action="/ETHUSDT" method="post">
+        <button name="eth" type="submit">ETH</button>
+    </form>
         <h3>settings</h3>
         <section id="order">
             USDT Start
             <input type="text"/>
             Order amount 
             <input type="text"/>
-            
         </section>
         <br>
         <form action="/start/" method="post">
@@ -71,6 +62,11 @@
         </form>
         </div>
         <h2>Receive:</h2>
-        <div id="log"></div>
+        <label for="fname">BTC:</label>
+        <input id="btc" type="text" value="0" readonly/>
+        <label for="fname">ETH:</label>
+        <input id="eth" type="text" value="0" readonly/>
+        <label for="fname">USDT:</label>
+        <input id="usdt" type="text" value="0" readonly/>
 </body>
 </html>

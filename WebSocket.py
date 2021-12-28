@@ -58,6 +58,10 @@ def on_message(ws, message):
     # end if
 def run_web_socket_thread():
     init()
+    #global stratgy, closesBtc, closesEth
+    #stratgy = stratgy
+    #closesBtc = btc
+    #closesEth = eth
     socket = f'wss://stream.binance.com:9443/stream?streams=ethusdt@kline_1m/btcusdt@kline_1m'
     ws = websocket.WebSocketApp(socket, on_open=on_open ,on_message=on_message, on_close=on_close)
     wst = threading.Thread(target=ws.run_forever)
@@ -81,4 +85,4 @@ def init():
     stratgy = Stratgy(start_usdt, 25000, btc_amount, etc_amount)
 
 
-run_web_socket()
+#run_web_socket()
