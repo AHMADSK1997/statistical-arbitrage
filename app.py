@@ -1,6 +1,7 @@
 import threading
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request, redirect
 from threading import Lock
+from flask.helpers import url_for
 from flask_socketio import SocketIO, emit
 from Binance import Binance
 from GeneticAlgorithm import runGa
@@ -32,11 +33,15 @@ def background_thread():
     while True:
         socketio.sleep(5)
         socketio.emit('my_response',
-                      {'btc': data['btc'], 'eth' : data['eth'] ,'usdt': data['usdt']})
+                      {'btc': round(data['btc'],4), 'eth' : round(data['eth'],4) ,'usdt': round(data['usdt'],4)})
 
+@app.route('/<usdt>/<amount>', methods=['GET','POST'])
 @app.route('/', methods=['GET','POST'])
-def hello_world():
-    return render_template('index.html')
+def home(usdt=None ,amount=None ):
+    if usdt == None or amount == None:
+        return render_template('index.html')
+    return render_template('index.html',usdt=usdt, amount=amount)
+
 @app.route('/BTCUSDT', methods=['GET','POST'])
 def btc():
     return render_template('btc.html',title='BTCUSDT')
@@ -66,11 +71,14 @@ def my_link():
 @app.route("/start/", methods=['POST'])
 def start():
     global thread
+    usdt = float(request.form.get('usdt'))
+    percentage_amount = float(request.form.get('quantity'))
     with thread_lock:
         if thread is None:
             thread = socketio.start_background_task(background_thread)
-    run_web_socket_thread()
-    return render_template('index.html')
+    run_web_socket_thread(usdt, percentage_amount)
+    return redirect(url_for('home', usdt=usdt , amount=percentage_amount))
+    #return render_template("index.html")
 
 @socketio.event
 def connect():
@@ -78,7 +86,6 @@ def connect():
 
 @app.route('/history/<stock>',methods=['GET','POST'])
 def history(stock):
-    print(stock)
     candlesticks = client.get_historical_klines(stock, Client.KLINE_INTERVAL_15MINUTE, "15 day ago UTC")
     processed_candlesticks = []
     for data in candlesticks:
@@ -115,8 +122,6 @@ def on_message(ws, message):
         btc_price = float(close)
     if(symbol=='ETHUSDT'):
         eth_price = float(close)
-    print(btc_price)
-    print(eth_price)
     if(btc_price != None and eth_price != None):
         closesBtc = numpy.append(closesBtc, [[time,btc_price]], axis=0)
         closesEth = numpy.append(closesEth, [[time,eth_price]], axis=0) 
@@ -127,31 +132,27 @@ def on_message(ws, message):
         eth_price = None
     # end if
 
-def run_web_socket_thread():
-    init()
+def run_web_socket_thread(usdt, percentage_amount):
+    init(usdt, percentage_amount)
     socket = f'wss://stream.binance.com:9443/stream?streams=ethusdt@kline_1m/btcusdt@kline_1m'
     ws = websocket.WebSocketApp(socket, on_open=on_open ,on_message=on_message, on_close=on_close)
     wst = threading.Thread(target=ws.run_forever)
     wst.daemon = True
     wst.start()
 
-def run_web_socket():
-    init()
-    socket = f'wss://stream.binance.com:9443/stream?streams=ethusdt@kline_1m/btcusdt@kline_1m'
-    ws = websocket.WebSocketApp(socket, on_open=on_open ,on_message=on_message, on_close=on_close)
-    ws.run_forever()
 
-def init():
+
+def init(start_usdt, percentage_amount):
     global stratgy, closesBtc , closesEth
     b = Binance(config.API_KEY,config.API_SECRET)
     closesBtc = b.historical_last_in_minutes("BTCUSDT","10")
     closesEth = b.historical_last_in_minutes("ETHUSDT","10")
-    start_usdt = 100000
-    btc_amount = (start_usdt/2)/float(closesBtc[1:][:,1][-1:])
-    etc_amount = (start_usdt/2)/float(closesEth[1:][:,1][-1:])
-    stratgy = Stratgy(start_usdt, 25000, btc_amount, etc_amount)
-
-
+    order_amount = start_usdt * percentage_amount / 100
+    data['btc'] = (start_usdt/2)/float(closesBtc[1:][:,1][-1:])
+    data['eth'] = (start_usdt/2)/float(closesEth[1:][:,1][-1:])
+    data['usdt'] = start_usdt
+    socketio.emit('my_response', {'btc': data['btc'], 'eth' : data['eth'] ,'usdt': data['usdt']})
+    stratgy = Stratgy(start_usdt, order_amount, data['btc'], data['eth'])
 
 if __name__ == "__main__":
     socketio.run(app)

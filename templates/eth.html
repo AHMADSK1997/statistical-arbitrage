@@ -1,23 +1,12 @@
-<html>
-    <head>
-        <title>ETHUSDT</title>
-        <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
-    </head>
+{% extends "base.html" %}
 
-    <body>
-        <form action="/" method="post">
-            <button name="HOME" type="submit">HOME</button>
-        </form>
-        <form action="/ga" method="post">
-            <button name="GA" type="submit">Genetic Algorithm </button>
-        </form>
-        <form action="/BTCUSDT" method="post">
-            <button name="btc" type="submit">BTC</button>
-        </form>
-        <form action="/ETHUSDT" method="post">
-            <button name="eth" type="submit">ETH</button>
-        </form>
-        <h1>{{ title }}</h1>
-        <script src="{{ url_for('static', filename='eth.js') }}"></script>
-    </body>
-</html>
+{% block head %}
+<title>ETH</title>
+<script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+{% endblock %}
+
+{% block content %}
+<h1>ETHUSDT</h1>
+<div id="chart"></div>
+<script src="{{ url_for('static', filename='eth.js') }}"></script>
+{% endblock %}
