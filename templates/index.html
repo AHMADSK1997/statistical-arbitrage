@@ -34,11 +34,11 @@
 {% endblock %}
 
 {% block content %}
-<h3>settings</h3>
+<h3>Statistical Arbitrage</h3>
 <form action="/start/" method="post">
     <section id="order">
         USDT Start
-        <input type="number" id="usdt start" required value="{{usdt}}" name="usdt" min="0" max="1000000000"/>
+        <input type="number" id="usdt start" required value="{{usdt}}" name="usdt" min="20" max="1000000000"/>
         Order amount 
         <input type="number" id="percentage" required value="{{amount}}" name="quantity" min="1" max="30">
     </section>
@@ -46,6 +46,7 @@
         <button name="startBtn" type="submit">start</button>
 </form>
 </div>
+<h4>Portfolio</h4>
 <label for="fname">BTC:</label>
 <input id="btc" type="text" value="0" readonly/>
 <label for="fname">ETH:</label>

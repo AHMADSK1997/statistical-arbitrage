@@ -32,15 +32,18 @@ def background_thread():
     """Example of how to send server generated events to clients."""
     while True:
         socketio.sleep(5)
+        socketio.emit('portfolio_msg',
+                      {'usdt': round(data['usdt'],4)})
         socketio.emit('my_response',
                       {'btc': round(data['btc'],4), 'eth' : round(data['eth'],4) ,'usdt': round(data['usdt'],4)})
 
 @app.route('/<usdt>/<amount>', methods=['GET','POST'])
 @app.route('/', methods=['GET','POST'])
-def home(usdt=None ,amount=None ):
-    if usdt == None or amount == None:
+def home():
+    if(stratgy.order_amount == 0):
         return render_template('index.html')
-    return render_template('index.html',usdt=usdt, amount=amount)
+    else:
+        return render_template('index.html', usdt=stratgy.usdt_start, amount=stratgy.order_amount*100/stratgy.usdt_start)
 
 @app.route('/BTCUSDT', methods=['GET','POST'])
 def btc():
@@ -58,6 +61,10 @@ def ga():
                                         Timeout=parameters.TIME_OUT,
                                         Upper=parameters.UPPER_THRESHOLD,
                                         Lower=parameters.LOWER_THRESHOLD)
+
+@app.route('/Portfolio', methods=['GET','POST'])
+def portfolio():
+    return render_template('portfolio.html')
 
 @app.route("/forward/", methods=['POST'])
 def my_link():
@@ -77,12 +84,11 @@ def start():
         if thread is None:
             thread = socketio.start_background_task(background_thread)
     run_web_socket_thread(usdt, percentage_amount)
-    return redirect(url_for('home', usdt=usdt , amount=percentage_amount))
-    #return render_template("index.html")
+    return redirect(url_for('home'))
 
 @socketio.event
 def connect():
-    emit('my_response', {'btc': data['btc'], 'eth' : data['eth'] ,'usdt': data['usdt']})
+    emit('my_response', {'btc': round(data['btc'],4), 'eth' : round(data['eth'],4) ,'usdt': round(data['usdt'],4)})
 
 @app.route('/history/<stock>',methods=['GET','POST'])
 def history(stock):
@@ -131,6 +137,7 @@ def on_message(ws, message):
         btc_price = None
         eth_price = None
     # end if
+
 
 def run_web_socket_thread(usdt, percentage_amount):
     init(usdt, percentage_amount)

@@ -8,7 +8,7 @@ import parameters
 
 class Stratgy():
     def __init__(self, usdt_amount, order_amount, btc_amount, eth_amount):
-        self.usdt_amount = usdt_amount
+        self.usdt_start = usdt_amount
         self.order_amount = order_amount
         self.btc_amount = btc_amount
         self.eth_amount = eth_amount
@@ -17,6 +17,7 @@ class Stratgy():
         self.period = 10
         self.profit = 0
         self.total_profit = 0
+        self.usdt_amount = usdt_amount
         self.btc_amount_befor_order = btc_amount
         self.eth_amount_befor_order = eth_amount
         print('btc_amount {} '.format(self.btc_amount))

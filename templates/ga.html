@@ -7,13 +7,33 @@
 {% block content %}
     <h3>Parameters</h3>
     <section id="Parameters">
-        UPPER_THRESHOLD : {{Upper}}
-        LOWER_THRESHOLD : {{Lower}}
-        Stoploss : {{Stoploss}}
-        TakeProfit : {{Takeprofit}}
-        Timeout : {{Timeout}}
+        <div>
+            Upper Threshold :
+            <input type="number" value="{{Upper}}" readonly/>
+        </div>
+        <br>
+        <div>
+            Lower Threshold 
+            <input type="number" value="{{Lower}}" readonly/>
+        </div>
+        <br>
+        <div>
+            Stop Loss : 
+            <input type="number" value="{{Stoploss}}" readonly/>
+        </div>
+        <br>
+        <div>
+            Take Profit : 
+            <input type="number" value="{{Takeprofit}}" readonly/>
+        </div>
+        <br>
+        <div>
+            Time Out : 
+            <input type="number" value="{{Timeout}}" readonly/>
+        </div>
     </section>
+    <br>
     <form action="/forward/" method="post">
-        <button name="forwardBtn" type="submit">Click me</button>
+        <button name="forwardBtn" type="submit">Optimize Parameters</button>
     </form>
 {% endblock %}
