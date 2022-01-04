@@ -20,15 +20,15 @@ class Stratgy():
         self.usdt_amount = usdt_amount
         self.btc_amount_befor_order = btc_amount
         self.eth_amount_befor_order = eth_amount
-        print('btc_amount {} '.format(self.btc_amount))
+        #print('btc_amount {} '.format(self.btc_amount))
 
-    def bot_trade(self, btc, eth):
-        print('bot trade is runing')
-        print('btc_amount {} '.format(self.btc_amount))
+    def bot_trade(self, msg, btc, eth):
+        #print('bot trade is runing')
+        #print('btc_amount {} '.format(self.btc_amount))
         btc_closes = btc[1:][:,1]
         eth_closes = eth[1:][:,1]
         my_trigger = self.getTrigger(btc, eth)
-        print("my-trigger {} ".format(my_trigger))
+        #print("my-trigger {} ".format(my_trigger))
         if(my_trigger == 'Buy BTC and sell ETH'):
             order = Order(my_trigger, btc[1:][:,0][-1:], btc_closes[-1:],
                              eth_closes[-1:], self.btc_amount, self.eth_amount, self.order_amount)
@@ -50,10 +50,11 @@ class Stratgy():
         #else:
             #print('do nothing')
         self.usdt_amount = self.btc_amount*btc_closes[-1:]+ self.eth_amount*eth_closes[-1:]
-        print('usdt {} '.format(self.usdt_amount))
-        print('total {} '.format(self.total_profit))
-        print("***********************************")
-        return {'btc':float(self.btc_amount), 'eth':float(self.eth_amount), 'usdt':float(self.usdt_amount)}
+        #print('usdt {} '.format(self.usdt_amount))
+        #print('total {} '.format(self.total_profit))
+        #print("***********************************")
+        if(msg == 'pairs trading'):
+            return {'btc':float(self.btc_amount), 'eth':float(self.eth_amount), 'usdt':float(self.usdt_amount), 'event':my_trigger}
 
 
     def getTrigger(self, btc, eth):
@@ -61,17 +62,11 @@ class Stratgy():
         btc_price = btc[1:][:,1]
         eth_price = eth[1:][:,1]
         my_zscore = self.calculateZscore(btc_price, eth_price)
-        print("my zscore {} ".format(my_zscore))
-        '''
-        print("my UPPER_THRESHOLD {} ".format(parameters.UPPER_THRESHOLD))
-        print("my LOWER_THRESHOLD {} ".format(parameters.LOWER_THRESHOLD))
-        print("my STOP_LOSS {} ".format(parameters.STOP_LOSS))
-        print("my TAKE_PROFIT {} ".format(parameters.TAKE_PROFIT))
-        print("my TIME_OUT {} ".format(parameters.TIME_OUT))
-        '''
+        #print("my zscore {} ".format(my_zscore))
+        
         # open position
         if(self.is_opened_position == False):
-            print("open position check")
+            #print("open position check")
             if(my_zscore>parameters.UPPER_THRESHOLD):
                 self.is_opened_position = True
                 return 'Buy BTC and sell ETH'
@@ -82,7 +77,7 @@ class Stratgy():
                 return 'do nothing'
         # close position
         elif(self.is_opened_position == True):
-            print("Cheaking close position")
+            #print("Cheaking close position")
             self.getProfit(btc_price[-1:], eth_price[-1:])
             passedTime = ((btc[1:][:,0][-1:] - self.lastorder.time)/60000)
             #print('passed time {}'.format(passedTime))
@@ -126,6 +121,6 @@ class Stratgy():
             profit_if_not_order =  self.btc_amount_befor_order*btc_price + self.eth_amount_befor_order*eth_price
             #print('profit_if_not_order {}'.format(profit_if_not_order))
             my_profit = profit_if_order - profit_if_not_order
-            print('profit is {}'.format(my_profit))
+            #print('profit is {}'.format(my_profit))
             #print('usdt is {}'.format(usdt))
             self.profit = my_profit

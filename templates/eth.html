@@ -2,11 +2,17 @@
 
 {% block head %}
 <title>ETH</title>
+<style>
+    .chart{
+        padding: 4px 12px;
+    }
+</style>
 <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
 {% endblock %}
 
 {% block content %}
-<h1>ETHUSDT</h1>
-<div id="chart"></div>
-<script src="{{ url_for('static', filename='eth.js') }}"></script>
+<h2>ETHUSDT</h2>
+<div id="chart" class="chart">
+    <script src="{{ url_for('static', filename='eth.js') }}"></script>
+</div>
 {% endblock %}

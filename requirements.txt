@@ -2,3 +2,5 @@ websocket-client
 python-binance
 binance-connector
 flask
+openpyxl
+pandas

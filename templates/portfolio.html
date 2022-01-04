@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block head %}
+<script>
+window.onload = function () {
+
+var dps = []; // dataPoints
+var chart = new CanvasJS.Chart("chartContainer", {
+	zoomEnabled: true,
+	animationEnabled: true,
+	title :{
+		text: "Portfolio",
+		animationEnabled: true
+	},
+	data: [{
+		type: "line",
+		dataPoints: dps
+	}]
+});
+	
+	my_points = '{{points}}'
+	const myArr = JSON.parse(my_points);
+	for( var i = 0; i<myArr.length; i++){
+		dps.push({
+			x: new Date(myArr[i][0]),
+			y: myArr[i][1]
+		});
+	}
+	
+var updateChart = function (point) {
+	console.log("bbbb")
+chart.render();
+};
+
+updateChart(dps);
+
+};
+
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+{% endblock %}

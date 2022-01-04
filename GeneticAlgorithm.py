@@ -1,7 +1,6 @@
 import numpy as np
 from geneticalgorithm import geneticalgorithm as ga
 import pandas as pd
-from Strategy_with_out_print import Strategy_with_out_print
 import parameters
 from Strategy import *
 
@@ -33,11 +32,11 @@ def getDatafromExel(num_of_points ,file_name, start):
     df.to_dict('records')
     return df.to_numpy()
 # arr[stoploss,takeprofit,timeout,UPPER_THRESHOLD,LOWER_THRESHOLD]
-varbound=np.array([[-1000,0],[0,1000],[0,20],[0,5],[-5,0]])
+varbound=np.array([[-500,0],[0,500],[0,10],[0,4],[-4,0]])
 vartype=np.array([['int'],['int'],['int'],['real'],['real']])
 
-algorithm_param = {'max_num_iteration': 1000,\
-                   'population_size':300,\
+algorithm_param = {'max_num_iteration': 300,\
+                   'population_size':100,\
                    'mutation_probability':0.1,\
                    'elit_ratio': 0.01,\
                    'crossover_probability': 0.5,\
@@ -66,12 +65,14 @@ def fitnessHelp(btc_arr, eth_arr, prams):
     start_usdt = 100000
     btc_amount = (start_usdt/2)/(btc_arr[:,1][len(btc_arr)-1])
     etc_amount = (start_usdt/2)/(eth_arr[:,1][len(eth_arr)-1])
-    stratgy = Strategy_with_out_print(100000, 25000, btc_amount, etc_amount)  
+    stratgy = Stratgy(100000, 25000, btc_amount, etc_amount)  
     for i in range (len(btc_arr)):
-        stratgy.bot_trade(btc_arr[i:i+parameters.PERIOD+1],eth_arr[i:i+parameters.PERIOD+1])
+        stratgy.bot_trade('genetic algorithm', btc_arr[i:i+parameters.PERIOD+1],eth_arr[i:i+parameters.PERIOD+1])
    # print("the prifit ######### {}".format(stratgy.total_profit))
     return stratgy.total_profit
 
 #runGa()
 
 #   [-2.77000000e+02  4.95000000e+02  1.70000000e+01  5.35521024e-02 -1.35114025e+00]
+#   [-156.          328.            5.            2.82306724   -0.92496072]
+#   [-392.          291.            4.            0.48588477   -1.12912214]
