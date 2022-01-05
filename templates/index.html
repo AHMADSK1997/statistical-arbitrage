@@ -35,7 +35,7 @@
         USDT Start
         <input type="number" id="usdt start" required value="{{usdt}}" name="usdt" min="20" max="1000000000"/>
         Order amount(percentage)
-        <input type="number" id="percentage" required value="{{amount}}" name="quantity" min="1" max="30">
+        <input type="number" id="percentage" required value="{{amount}}" name="quantity" min="1" max="40">
     </section>
     <br>
         <button class="button" id="start"  name="startBtn" type="submit">Start</button>
@@ -46,10 +46,12 @@
 <table id='Results'>
     <tr>
       <th>Date</th>
-      <th>BTC Amont</th>
-      <th>ETH Amont</th>
-      <th>Portfolio</th>
+      <th>BTC Amount</th>
+      <th>ETH Amount</th>
+      <th>Portfolio $</th>
       <th>Event</th>
+      <th>BTCUSDT</th>
+      <th>ETHUSDT</th>
         {% for line in table %}
         <tr>
             {% for element in line %}

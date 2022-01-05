@@ -32,7 +32,7 @@ def getDatafromExel(num_of_points ,file_name, start):
     df.to_dict('records')
     return df.to_numpy()
 # arr[stoploss,takeprofit,timeout,UPPER_THRESHOLD,LOWER_THRESHOLD]
-varbound=np.array([[-500,0],[0,500],[0,10],[0,4],[-4,0]])
+varbound=np.array([[-1000,0],[0,1000],[0,50],[0,10],[-10,0]])
 vartype=np.array([['int'],['int'],['int'],['real'],['real']])
 
 algorithm_param = {'max_num_iteration': 300,\
@@ -76,3 +76,4 @@ def fitnessHelp(btc_arr, eth_arr, prams):
 #   [-2.77000000e+02  4.95000000e+02  1.70000000e+01  5.35521024e-02 -1.35114025e+00]
 #   [-156.          328.            5.            2.82306724   -0.92496072]
 #   [-392.          291.            4.            0.48588477   -1.12912214]
+#   [-6.33000000e+02  5.38000000e+02  3.60000000e+01  7.13111702e+00 -4.45071649e-01]

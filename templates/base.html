@@ -85,9 +85,10 @@
         // to the client. The data is then displayed in the "Received"
         // section of the page.
         socket.on('my_response', function(msg, cb) {
-            $('#Results tr:last').after('<tr> <td>'+msg.date+'</td> <td>'+msg.btc+'</td> <td>'+msg.eth+'</td> <td>'+msg.usdt+'</td> <td>'+msg.event+'</td> </tr>')
-            if (cb)
-                cb();
+          console.log(msg)
+          $('#Results tr:last').after('<tr> <td>'+msg.date+'</td> <td>'+msg.btc+'</td> <td>'+msg.eth+'</td> <td>'+msg.usdt+'</td> <td>'+msg.event+'</td> <td>'+msg.btc_price+'</td> <td>'+msg.eth_price+'</td></tr>')
+          if (cb)
+              cb();
         });
     });
 </script>

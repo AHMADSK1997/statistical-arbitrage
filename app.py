@@ -23,7 +23,7 @@ closesEth = []
 lastorder = None
 stratgy = Stratgy(0, 0, 0, 0)
 data = {'btc': 0 , 'eth': 0, 'usdt': 0, 'event':' '}
-field_names = ['date','btc', 'eth', 'usdt', 'event']
+field_names = ['date', 'btc amount', 'eth amount', 'portfolio($)', 'event', 'BTCUSDT', 'ETHUSDT']
 time = t.time()*1000
 flag = False
 async_mode = None
@@ -34,12 +34,11 @@ thread = None
 thread_lock = Lock()
 
 
-with open('event.csv', 'a+', newline='') as write_obj:
-        # Create a writer object from csv module
-        csv_writer = writer(write_obj)
-        # Add contents of list as last row in the csv file
-        csv_writer.writerow(field_names)
-
+f = open('event.csv', "w")
+# Create a writer object from csv module
+f.write(",".join(field_names)+'\n') #Give your csv text here.
+## Python will convert \n to os.linesep
+f.close()
 
 def background_thread():
     global data
@@ -47,14 +46,21 @@ def background_thread():
     while True:
         socketio.sleep(60)
         #now = str(time.day)+'/'+str(time.month)+'/'+str(time.year)+'  ,'+str(time.hour)+':'+'0'+str(time.minute)
-        append_list_as_row('event.csv',[time, round(data['btc'],4),round(data['eth'],4) ,round(data['usdt'],4),data['event']])
+        append_list_as_row('event.csv',
+                            [time, round(data['btc'],4),
+                            round(data['eth'],4),
+                            round(data['usdt'],4),
+                            data['event'],
+                            round(float(closesBtc[1:][:,1][-1:]),4),
+                            round(float(closesEth[1:][:,1][-1:]),4)])
         socketio.emit('my_response',
                     {'date':  datetime.fromtimestamp(time/1000).strftime("%Y-%m-%d, %H:%M"),
                     'btc': round(data['btc'],4),
                     'eth' : round(data['eth'],4),
                     'usdt': round(data['usdt'],4),
-                    'event':data['event']})
-        socketio.emit('portfolio',{'time':time,'usdt':round(data['usdt'],4)})
+                    'event':data['event'],
+                    'btc_price': float(closesBtc[1:][:,1][-1:]),
+                    'eth_price': float(closesEth[1:][:,1][-1:])})
 
 @app.route('/<usdt>/<amount>', methods=['GET','POST'])
 @app.route('/', methods=['GET','POST'])
@@ -108,26 +114,9 @@ def start():
         if thread is None:
             thread = socketio.start_background_task(background_thread)
     run_web_socket_thread(usdt, percentage_amount)
-    '''
-    socketio.emit('my_response',
-                        {'date': datetime.fromtimestamp(time/1000).strftime("%Y-%m-%d, %H:%M"),
-                        'btc': round(data['btc'],4),
-                        'eth' : round(data['eth'],4),
-                        'usdt': round(data['usdt'],4),
-                         'event':data['event']})
-    '''
     return redirect(url_for('home'))
 
-'''
-@socketio.event
-def connect():
-    #append_list_as_row('event.csv',[round(data['btc'],4),round(data['eth'],4) ,round(data['usdt'],4),data['event']])
-    emit('my_response', {'date': datetime.fromtimestamp(time/1000).strftime("%Y-%m-%d, %H:%M"),
-                        'btc': round(data['btc'],4),
-                        'eth' : round(data['eth'],4),
-                        'usdt': round(data['usdt'],4),
-                        'event': data['event']})
-'''
+
 @app.route('/history/<stock>',methods=['GET','POST'])
 def history(stock):
     candlesticks = client.get_historical_klines(stock, Client.KLINE_INTERVAL_15MINUTE, "15 day ago UTC")
@@ -158,7 +147,7 @@ def portfolio_data():
 @app.route("/DownloadCsv")
 def DownloadCsv():
     table = getDatafromExel('event.csv',0)
-    csv = 'Date,BTC,ETH,Portfolio,event\n'
+    csv = ','.join(field_names)+'\n'
     for line in table:
         for i in range(len(line)):
             if i==0 :
@@ -215,8 +204,6 @@ def run_web_socket_thread(usdt, percentage_amount):
     wst.daemon = True
     wst.start()
 
-
-
 def init(start_usdt, percentage_amount):
     global stratgy, closesBtc , closesEth
     b = Binance(config.API_KEY,config.API_SECRET)
@@ -229,8 +216,17 @@ def init(start_usdt, percentage_amount):
     socketio.emit('my_response', {'date': datetime.fromtimestamp(time/1000).strftime("%Y-%m-%d, %H:%M"),
                                 'btc': data['btc'],
                                 'eth' : data['eth'],
-                                'usdt': data['usdt']})
-    append_list_as_row('event.csv',[int(int(time/10000)*10000), round(data['btc'],4),round(data['eth'],4) ,round(data['usdt'],4),data['event']])
+                                'usdt': data['usdt'],
+                                'event': data['event'],
+                                'btc_price': float(closesBtc[1:][:,1][-1:]),
+                                'eth_price': float(closesEth[1:][:,1][-1:])})
+    append_list_as_row('event.csv', [int(int(time/10000)*10000),
+                                    round(data['btc'],4),
+                                    round(data['eth'],4),
+                                    round(data['usdt'],4),
+                                    data['event'],
+                                    round(float(closesBtc[1:][:,1][-1:]),4),
+                                    round(float(closesEth[1:][:,1][-1:]),4)])
     stratgy = Stratgy(start_usdt, order_amount, data['btc'], data['eth'])
 
 def append_list_as_row(file_name, list_of_elem):
@@ -244,7 +240,7 @@ def append_list_as_row(file_name, list_of_elem):
 def getDatafromExel(file_name, start):
     try:
         df = pd.read_csv(file_name, skiprows=start)
-        df.columns = ['date','btc','eth','usdt','event']
+        df.columns = field_names
         df.to_dict('records')
     except pd.errors.EmptyDataError:
         df = pd.DataFrame()
