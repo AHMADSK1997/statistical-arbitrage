@@ -4,3 +4,7 @@ binance-connector
 flask
 openpyxl
 pandas
+flask_socketio
+geneticalgorithm
+matplotlib
+scipy

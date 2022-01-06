@@ -67,7 +67,7 @@ def fitnessHelp(btc_arr, eth_arr, prams):
     etc_amount = (start_usdt/2)/(eth_arr[:,1][len(eth_arr)-1])
     stratgy = Stratgy(100000, 25000, btc_amount, etc_amount)  
     for i in range (len(btc_arr)):
-        stratgy.bot_trade('genetic algorithm', btc_arr[i:i+parameters.PERIOD+1],eth_arr[i:i+parameters.PERIOD+1])
+        stratgy.bot_trade('genetic algorithm', btc_arr[i:i+11],eth_arr[i:i+11])
    # print("the prifit ######### {}".format(stratgy.total_profit))
     return stratgy.total_profit
 
