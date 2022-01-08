@@ -20,7 +20,6 @@ class Stratgy():
         self.usdt_amount = usdt_amount
         self.btc_amount_befor_order = btc_amount
         self.eth_amount_befor_order = eth_amount
-        #print('btc_amount {} '.format(self.btc_amount))
 
     def bot_trade(self, msg, btc, eth):
         #print('bot trade is runing')
@@ -61,8 +60,8 @@ class Stratgy():
         #print("trigger is runing")
         btc_price = btc[1:][:,1]
         eth_price = eth[1:][:,1]
-        my_zscore = self.calculateZscore(btc_price, eth_price)
-        #print("my zscore {} ".format(my_zscore))
+        my_zscore = self.calculateZscore(btc_price[-self.period:], eth_price[-self.period:])
+        print("zscore: {} ".format(my_zscore))
         
         # open position
         if(self.is_opened_position == False):
@@ -80,7 +79,8 @@ class Stratgy():
             #print("Cheaking close position")
             self.getProfit(btc_price[-1:], eth_price[-1:])
             passedTime = ((btc[1:][:,0][-1:] - self.lastorder.time)/60000)
-            #print('passed time {}'.format(passedTime))
+            print('passed time: {}'.format(passedTime))
+            print('profit: {}'.format(self.profit))
             if(self.profit < parameters.STOP_LOSS or self.profit > parameters.TAKE_PROFIT or passedTime > parameters.TIME_OUT):
                 if(self.lastorder.order == 'Buy BTC and sell ETH'):
                     self.updateClose()
