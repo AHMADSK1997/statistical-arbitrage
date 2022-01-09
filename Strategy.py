@@ -27,25 +27,29 @@ class Stratgy():
         btc_closes = btc[1:][:,1]
         eth_closes = eth[1:][:,1]
         my_trigger = self.getTrigger(btc, eth)
+
         #print("my-trigger {} ".format(my_trigger))
         if(my_trigger == 'Buy BTC and sell ETH'):
             order = Order(my_trigger, btc[1:][:,0][-1:], btc_closes[-1:],
                              eth_closes[-1:], self.btc_amount, self.eth_amount, self.order_amount)
             self.lastorder = order
-            self.saveDataBeforEexchage()
-            
+            self.btc_amount_befor_order = float(self.btc_amount)
+            self.eth_amount_befor_order = float(self.eth_amount)
+            #print("btc_amount_befor_order {}".format(self.btc_amount_befor_order))
             order.exchage()
             self.updateData(order.btc_amount, order.eth_amount, btc_closes[-1:], eth_closes[-1:])
-
+            #print("btc_amount {}".format(order.btc_amount))
         elif(my_trigger == 'Sell BTC and buy ETH'):
             order = Order(my_trigger, btc[1:][:,0][-1:], btc_closes[-1:],
                              eth_closes[-1:], self.btc_amount, self.eth_amount, self.order_amount)
             
             self.lastorder = order
-            self.saveDataBeforEexchage()
-            
+            self.btc_amount_befor_order = float(self.btc_amount)
+            self.eth_amount_befor_order = float(self.eth_amount)
+            #print("btc_amount_befor_order {}".format(self.btc_amount_befor_order))
             order.exchage()
             self.updateData(order.btc_amount, order.eth_amount, btc_closes[-1:], eth_closes[-1:])
+            #print("btc_amount {}".format(self.btc_amount))
         #else:
             #print('do nothing')
         self.usdt_amount = self.btc_amount*btc_closes[-1:]+ self.eth_amount*eth_closes[-1:]
@@ -102,12 +106,12 @@ class Stratgy():
         return zscore[-1:]
 
     def updateData(self, btc_amount, eth_amount, btc_price, eth_price):
-            self.btc_amount = btc_amount
-            self.eth_amount = eth_amount
+            self.btc_amount = float(btc_amount)
+            self.eth_amount = float(eth_amount)
     
     def saveDataBeforEexchage(self):
-        self.btc_amount_befor_order = self.btc_amount
-        self.eth_amount_befor_order = self.eth_amount
+        self.btc_amount_befor_order = float(self.btc_amount)
+        self.eth_amount_befor_order = float(self.eth_amount)
 
     def updateClose(self):
         self.is_opened_position = False
@@ -116,11 +120,14 @@ class Stratgy():
         self.profit = 0
 
     def getProfit(self, btc_price, eth_price):
-            profit_if_order = self.btc_amount*btc_price + self.eth_amount*eth_price
-            #print('profit_if_order {}'.format(profit_if_order))
-            profit_if_not_order =  self.btc_amount_befor_order*btc_price + self.eth_amount_befor_order*eth_price
-            #print('profit_if_not_order {}'.format(profit_if_not_order))
-            my_profit = profit_if_order - profit_if_not_order
-            #print('profit is {}'.format(my_profit))
-            #print('usdt is {}'.format(usdt))
-            self.profit = my_profit
+        #print("calculate profit")
+        #print("btc_amount_befor_order {}".format(self.btc_amount_befor_order))
+        #print("btc_amount {}".format(self.btc_amount))
+        profit_if_order = self.btc_amount*btc_price + self.eth_amount*eth_price
+        #print('profit_if_order {}'.format(profit_if_order))
+        profit_if_not_order =  self.btc_amount_befor_order*btc_price + self.eth_amount_befor_order*eth_price
+        #print('profit_if_not_order {}'.format(profit_if_not_order))
+        my_profit = profit_if_order - profit_if_not_order
+        #print('profit is {}'.format(my_profit))
+        #print('usdt is {}'.format(usdt))
+        self.profit = my_profit

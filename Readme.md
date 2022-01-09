@@ -34,21 +34,25 @@ Using these concepts of moving averages and z-score we create the entry points f
 
 ## Run the code
 
-It's work on [Python 3.9.0 ](https://www.python.org/downloads/release/python-390/)
+It works on [Python 3.9.0 ](https://www.python.org/downloads/release/python-390/)
   ```
   git clone https://github.com/AHMADSK1997/statistical-arbitrage.git
   pip install -r requirements.txt
   python app.py
   ```
+  Connect to http://localhost:5000
 ### Home page
 ![alt text](https://imgur.com/x9QO2vz.png)
 This is the home page of the project, you can enter the amount of money you want to invest, and how much percent you want to invest in each trade, then you can start, below that there’s a table that describes the history of events, a new row is added every minute,  the first column displays the date, the second is the amount of bitcoin currencies and the third is the amount of Ethereum currencies, the fourth column is the history of portfolio (the sum of the BTC and ETH in USD) then comes the history of events (whether it was buy BTC and sell ETH or vice versa) and then two columns for the exact prices in USD of the currencies at the time of the trade, you can also download the history of events as an excel file by clicking on Download CSV.
 
 ### Genetic Algorithm page
 ![alt text](https://imgur.com/Jh42LEm.png)
+Here the GA page, the user can see the parameters and can optimize them if he want.
+When click on Optimize parameters it will take some time until update them.
 
 ### Live data graph 
 ![alt text](https://imgur.com/CWeCDzA.png)
+This graph outlines the real-time price of Bitcoin. The y-axis shows the fluctuation of price in Bitcoin in USDT, the x-axis illustrates the time-period and allows the user to adjust the specific period being viewed. The y-axis shows the fluctuation of price in Bitcoin. 
 
 ### Portfolio
 ![alt text](https://imgur.com/M81QM08.png)
